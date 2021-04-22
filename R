@@ -1,0 +1,22 @@
+plot(STANDARD$concentration, STANDARD$absorbance, 
+     main = "Protein Concentration vs. Absorbance (750 nm)",
+     xlab = "Protein Concentration (mg/ml)",
+     ylab = "Absorbance (750 nm")
+abline(lm(STANDARD$absorbance ~ STANDARD$concentration), col = "red")
+
+> bestfit <- lm(formula = STANDARD$absorbance ~ STANDARD$concentration)
+
+
+> predict_concentration <- function(absorbance) {
++     concentration <- ((absorbance - bestfit$coefficients[[1]])/bestfit$coefficients[[2]])
++     return(concentration) } 
+
+> UNKNOWNCONCENTRATION <- c(predict_concentration(UNKNOWNSAMPLES))
+
+> cbind(data.frame(UNKNOWNSAMPLES), data.frame(UNKNOWNCONCENTRATION))
+
+plot(UNKNOWNCONCENTRATION, UNKNOWNSAMPLES, 
+     main = "UnknownProtein Concentration vs. Absorbance (750 nm)",
+     xlab = "Predicted Protein Concentration (mg/ml)",
+     ylab = "Absorbance (750 nm")
+abline(lm(STANDARD$absorbance ~ STANDARD$concentration), col = "red")
