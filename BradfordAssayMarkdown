@@ -1,0 +1,53 @@
+---
+title: "BradfordAssay Markdown"
+author: "laurence"
+date: "4/25/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+**Standard Analysis**
+```{r, echo=FALSE}
+load("~/bradfordassay/.RData")
+
+STANDARD
+
+plot(STANDARD$concentration, STANDARD$absorbance,
+       main = "Protein Concentration vs. Absorbance (750 nm)",
+       xlab = "Protein Concentration (mg/ml)",
+       ylab = "Absorbance (750 nm")
+  abline(lm(STANDARD$absorbance ~ STANDARD$concentration), col = "red")
+```
+
+```{r, echo=FALSE}
+bestfit <- lm(formula = STANDARD$absorbance ~ STANDARD$concentration)
+```
+**Prediction Function**
+Concentration = (absorbance -`r bestfit$coefficients[[1]]`)/`r bestfit$coefficients[[2]]`
+
+
+**R-Squared value**
+R^2 for this function is `r  1-sum((bestfit$residuals)^2)`
+
+**Prediction of Unknown Samples**
+```{r, echo=FALSE}
+  predictconcentration <- function(absorbance) {
+     concentration <- ((absorbance - bestfit$coefficients[[1]])/bestfit$coefficients[[2]])
+     return(concentration)
+  }
+
+UNKNOWNCONCENTRATION <- c(predictconcentration(UNKNOWNS$absorbance))
+
+cbind(data.frame(UNKNOWNS$absorbance), data.frame(UNKNOWNCONCENTRATION))
+
+ plot(UNKNOWNCONCENTRATION, UNKNOWNS$absorbance,
+       main = "Unknown Protein Concentration vs. Absorbance (750 nm)",
+       xlab = "Predicted Protein Concentration (mg/ml)",
+       ylab = "Absorbance (750 nm")
+  abline(lm(STANDARD$absorbance ~ STANDARD$concentration), col = "red")
+```
